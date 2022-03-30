@@ -2,7 +2,7 @@ import {AddTodolistActionType, RemoveTodolistActionType, SetTodolistsActionType}
 import {TaskPriorities, TaskStatuses, TaskType, todolistsAPI, UpdateTaskModelType} from '../../api/todolists-api'
 import {Dispatch} from 'redux'
 import {AppRootStateType} from '../../app/store'
-import {setAppStatusAC, SetStatusActionType} from "../../app/app-reducer";
+import {setAppStatusAC, SetStatusActionType, SetErrorActionType, setErrorAC} from "../../app/app-reducer";
 
 const initialState: TasksStateType = {}
 
@@ -72,10 +72,15 @@ export const addTaskTC = (title: string, todolistId: string) => (dispatch: Dispa
     dispatch(setAppStatusAC('loading'));
     todolistsAPI.createTask(todolistId, title)
         .then(res => {
-            const task = res.data.data.item
-            const action = addTaskAC(task)
-            dispatch(action);
-            dispatch(setAppStatusAC('succeeded'));
+            if(res.data.resultCode === 0) {
+                const task = res.data.data.item
+                const action = addTaskAC(task)
+                dispatch(action);
+                dispatch(setAppStatusAC('succeeded'));
+            } else {
+                dispatch(setErrorAC(res.data.messages[0]));
+                dispatch(setAppStatusAC('failed'));
+            }
         })
 }
 export const updateTaskTC = (taskId: string, domainModel: UpdateDomainTaskModelType, todolistId: string) =>
@@ -125,4 +130,5 @@ type ActionsType =
     | RemoveTodolistActionType
     | SetTodolistsActionType
     | ReturnType<typeof setTasksAC>
-    | SetStatusActionType;
+    | SetStatusActionType
+    | SetErrorActionType;
