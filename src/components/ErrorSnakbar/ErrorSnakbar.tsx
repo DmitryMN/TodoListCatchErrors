@@ -1,9 +1,9 @@
 import React, {useState} from "react";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert, {AlertProps} from "@mui/material/Alert";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { AppRootStateType } from "../../app/store";
-import { IsErrorType } from "../../app/app-reducer";
+import { IsErrorType, setErrorAC } from "../../app/app-reducer";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     props, ref) {
@@ -13,6 +13,8 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 
 export const ErrorSnackbar = () => {
 
+    const dispatch = useDispatch();
+
     const isError = useSelector<AppRootStateType, IsErrorType>(state => state.app.isError);
 
     const [open, setOpen] = useState<boolean>(true);
@@ -21,13 +23,14 @@ export const ErrorSnackbar = () => {
         if (reason === 'clickaway') {
             return;
         }
-        setOpen(false);
+        // setOpen(false);
+        dispatch(setErrorAC(null));
     };
 
     return(
-        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Snackbar open={isError !== null} autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="error" sx={{width: '100%'}}>
-                Error message 😠
+                {isError} 😠
             </Alert>
         </Snackbar>
     );
