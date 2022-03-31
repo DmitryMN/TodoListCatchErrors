@@ -17,8 +17,6 @@ export const ErrorSnackbar = () => {
 
     const isError = useSelector<AppRootStateType, IsErrorType>(state => state.app.isError);
 
-    const [open, setOpen] = useState<boolean>(true);
-
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
             return;
