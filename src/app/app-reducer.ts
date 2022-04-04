@@ -3,7 +3,7 @@ export type IsErrorType = string | null
 
 const initialState = {
     status: 'idle' as RequestStatusType,
-    isError: 'error' as IsErrorType,
+    isError: null as IsErrorType,
 }
 
 type InitialStateType = typeof initialState
